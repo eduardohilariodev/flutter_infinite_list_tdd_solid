@@ -27,6 +27,7 @@ pure, devoid of any muddying details like how to talk to a database or API.
   - [Test-Driven Development](#test-driven-development)
     - [Files that are **NOT** going to be written in a TDD manner:](#files-that-are-not-going-to-be-written-in-a-tdd-manner)
   - [Implement the `domain` layer](#implement-the-domain-layer)
+  - [Implement the `data` layer](#implement-the-data-layer)
 
 Step-by-step overview guide on implementing a new feature
 
@@ -82,3 +83,20 @@ Step-by-step overview guide on implementing a new feature
   2. Then do the concrete implementation
   > Note: For consistency, implement a `UseCase` abstract class with a `call()`
   > method from which all other `UseCase` classes will inherit from.
+
+## Implement the `data` layer
+> While the `domain` layer is the safe center of an app which is independent of
+> other layers, the `data` layer is a place where the app meets with the harsh
+> outside world of APIs and 3rd party libraries. It consists of low-level Data
+> Sources, Repositories which are the single source of truth for the data, and
+> finally Models.
+  - Implement `model`
+  - Create a _fixture_ to test the `model`
+     > Let's first conversion logic we'll implement will be the fromJson method
+     > which should return a NumberTriviaModel instance with the same data as is
+     > present inside the JSON string. We aren't going to get the JSON string
+     > from the "live" Numbers API. Instead, we will create a fixture which is
+     > just a regular JSON file used for testing. That's because we want to have
+     > a predictable JSON string to test with - for example, what if the Numbers
+     > API is under maintenance? We don't want any outside forces to mess with
+     > the results of our tests.
