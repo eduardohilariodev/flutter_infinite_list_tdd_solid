@@ -1,33 +1,55 @@
 Cookbook on feature-drive TDD Flutter app building with SOLID principles
 
-- [1. Define the feature](#1-define-the-feature)
-- [2. Design the UX/UI of the feature](#2-design-the-uxui-of-the-feature)
-- [3. Clean Architecture](#3-clean-architecture)
-- [4. Test-Driven Development](#4-test-driven-development)
-  - [4.1. Files that are **NOT** going to be written in a TDD manner:](#41-files-that-are-not-going-to-be-written-in-a-tdd-manner)
-- [5. Implement the `domain` layer](#5-implement-the-domain-layer)
+- [Define the feature](#define-the-feature)
+- [Design the UX/UI of the feature](#design-the-uxui-of-the-feature)
+- [Clean Architecture](#clean-architecture)
+- [Test-Driven Development](#test-driven-development)
+  - [Files that are **NOT** going to be written in a TDD manner:](#files-that-are-not-going-to-be-written-in-a-tdd-manner)
+- [Implement the `domain` layer](#implement-the-domain-layer)
 
 Step-by-step overview guide on implementing a new feature
 
-# 1. Define the feature
+## Define the feature
 
-# 2. Design the UX/UI of the feature
+## Design the UX/UI of the feature
 
-# 3. Clean Architecture
+## Clean Architecture
 
-> The actual coding process will happen from the inner, most stable layers of the architecture outwards.
+> The actual coding process will happen from the inner, most stable layers of
+> the architecture outwards.
 
-# 4. Test-Driven Development
+## Test-Driven Development
 
-## 4.1. Files that are **NOT** going to be written in a TDD manner:
+### Files that are **NOT** going to be written in a TDD manner:
 
-1. `entity` classes
-   1. We aren't going to write it in a test-driven way and it's for one simple reason - there's nothing to test. 
+- `entity` classes
+  - We aren't going to write it in a test-driven way and it's for one simple
+    reason - there's nothing to test.
 
-# 5. Implement the `domain` layer
+## Implement the `domain` layer
 
-1. Implement `entity` classes
-   > **Q&A on `entity`:**
-   >
-   > - **Q:** What kind of **data** will this entity need to work with?
-   > - **A:** To find out which fields this `entity` class must have, we have to take a look at the response from the API.
+- Implement `entity` classes
+  > **Q&A on `entity`:**
+  >
+  > - **Q:** What kind of **data** will this entity need to work with?
+  > - **A:** To find out which fields `entity` classes must have, we have to
+  >   take a look at the response from the API.
+- Implement `failure` classes In order to not have to deal with exceptions, we
+  implement `failure` classes. They use the package `dartz`, that brings the
+  `Either` type to Dart. `failure` classes return an `Either` with a `Failure`
+  and the object with the wanted data.
+- Implement the `repository` contract on the `domain` layer
+  > **Q&A on `repository` contract:**
+  >
+  > - **Q:** Why are there two `repository` files?
+  > - **A:** The `repository` contract (placed on the `domain` layer) is the
+  >   interface that the `data` layer with implement. This separation of
+  >   concerns (the **D** in **SOLID**) protects the `domain` layer from the
+  >   outside world (the `data` layer). This also allows us to test it without
+  >   implementing a concrete `repository` class, through the use of **mocks**
+  >   (the `mockito` package on this project).
+  >
+  > - **Q:** What's implemented on the contract?
+  > - **A:** The `repository` contract is a class that **has all the methods**
+  >   that the `repository` class (on the `data` layer) will have to implement.
+  >   It's a contract that defines what the `repository` class will have to do.
