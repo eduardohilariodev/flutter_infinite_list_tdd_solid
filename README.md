@@ -1,11 +1,32 @@
-Cookbook on feature-drive TDD Flutter app building with SOLID principles
 
-- [Define the feature](#define-the-feature)
-- [Design the UX/UI of the feature](#design-the-uxui-of-the-feature)
-- [Clean Architecture](#clean-architecture)
-- [Test-Driven Development](#test-driven-development)
-  - [Files that are **NOT** going to be written in a TDD manner:](#files-that-are-not-going-to-be-written-in-a-tdd-manner)
-- [Implement the `domain` layer](#implement-the-domain-layer)
+# Concepts
+- **Repository**:
+  > In the context of clean architecture, a repository takes on a more
+  > specialized role.
+  > 
+  > It serves as a middleman between the application's business logic and the
+  > data source (which could be a database, an API, or even just in-memory
+  > data). The repository pattern is all about abstracting away the complexities
+  > of data retrieval and manipulation.
+  > 
+  > It enables the core business logic, or domain layer, to remain clean and
+pure, devoid of any muddying details like how to talk to a database or API.
+- **Service Locator**:
+  > One of the advantages of using GetIt is that it allows us to easily manage
+  >dependencies between services. We can use named registrations to specify
+  >dependencies between services, and GetIt will automatically resolve them when
+  >the services are requested. We can also use the lazy parameter to defer the
+  >creation of a service until it is needed.
+# Cookbook on feature-drive TDD Flutter app building with SOLID principles
+
+- [Concepts](#concepts)
+- [Cookbook on feature-drive TDD Flutter app building with SOLID principles](#cookbook-on-feature-drive-tdd-flutter-app-building-with-solid-principles)
+  - [Define the feature](#define-the-feature)
+  - [Design the UX/UI of the feature](#design-the-uxui-of-the-feature)
+  - [Clean Architecture](#clean-architecture)
+  - [Test-Driven Development](#test-driven-development)
+    - [Files that are **NOT** going to be written in a TDD manner:](#files-that-are-not-going-to-be-written-in-a-tdd-manner)
+  - [Implement the `domain` layer](#implement-the-domain-layer)
 
 Step-by-step overview guide on implementing a new feature
 
@@ -53,3 +74,9 @@ Step-by-step overview guide on implementing a new feature
   > - **A:** The `repository` contract is a class that **has all the methods**
   >   that the `repository` class (on the `data` layer) will have to implement.
   >   It's a contract that defines what the `repository` class will have to do.
+- Implement the `usecase` for each `repository` method
+  1. First write the test for it
+  > The first and only test will ensure that the Repository is
+  actually called and that the data simply passes unchanged throught the Use
+  Case
+  2. Then do the concrete implementation
