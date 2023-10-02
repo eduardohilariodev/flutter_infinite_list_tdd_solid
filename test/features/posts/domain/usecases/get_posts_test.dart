@@ -38,7 +38,7 @@ void main() {
 
       /// Act
       // The "act" phase of the test. Call the not-yet-existent method.
-      final result = await getPosts.execute(startIndex: tStartIndex);
+      final result = await getPosts(const Params(startIndex: tStartIndex));
 
       /// Assert
       // UseCase should simply return whatever was returned from the Repository

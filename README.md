@@ -80,3 +80,5 @@ Step-by-step overview guide on implementing a new feature
   actually called and that the data simply passes unchanged throught the Use
   Case
   2. Then do the concrete implementation
+  > Note: For consistency, implement a `UseCase` abstract class with a `call()`
+  > method from which all other `UseCase` classes will inherit from.
