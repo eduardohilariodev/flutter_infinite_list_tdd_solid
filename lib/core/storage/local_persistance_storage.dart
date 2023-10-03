@@ -21,6 +21,7 @@ class LocalPersistanceStorageImpl implements LocalPersistanceStorage {
     await sharedPreferences.setString(key, value);
   }
 }
+
 /// ### Usage:
 /// ```
 /// LocalPersistanceStorageKeys.<key>.name,
