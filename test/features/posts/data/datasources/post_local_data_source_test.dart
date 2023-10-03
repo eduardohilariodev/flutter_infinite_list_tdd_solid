@@ -18,6 +18,12 @@ void main() {
   late MockLocalPersistanceStorage mockLocalPersistanceStorage;
   late PostLocalDataSourceImpl localDataSource;
 
+  final tJsonList = json.decode(fixture('posts_cached.json')) as List<dynamic>;
+
+  final tPostModels = tJsonList
+      .map((dynamic item) => PostModel.fromJson(item as Map<String, dynamic>))
+      .toList();
+
   setUp(() {
     mockLocalPersistanceStorage = MockLocalPersistanceStorage();
     localDataSource = PostLocalDataSourceImpl(
@@ -26,16 +32,8 @@ void main() {
   });
 
   group('getLastPosts | ', () {
-// Step 1: Decode the JSON to a List<dynamic>
-    final tJsonList =
-        json.decode(fixture('posts_cached.json')) as List<dynamic>;
-
-// Step 2: Map through the list and convert each Map to a PostModel
-    final tPostModels = tJsonList
-        .map((dynamic item) => PostModel.fromJson(item as Map<String, dynamic>))
-        .toList();
     test(
-      'SHOULD return [List<Post] from LocalPersistanceStorage WHEN there IS one in the cache',
+      'SHOULD return [List<PostModel>] from LocalPersistanceStorage WHEN there IS data in the cache',
       () async {
         // Arrange
         when(() => mockLocalPersistanceStorage.getString(any()))
@@ -43,8 +41,10 @@ void main() {
         // Act
         final result = await localDataSource.getLastPosts();
         // Assert
-        verify(() => mockLocalPersistanceStorage.getString('CACHED_POSTS'))
-            .called(1);
+        verify(
+          () => mockLocalPersistanceStorage
+              .getString(LocalPersistanceStorageKeys.cachedPosts.name),
+        ).called(1);
 
         expect(result, equals(tPostModels));
       },
@@ -60,6 +60,33 @@ void main() {
         final call = localDataSource.getLastPosts;
         // Assert
         expect(call, throwsA(isA<CacheException>()));
+      },
+    );
+  });
+
+  group('cachePosts | ', () {
+    test(
+      'SHOULD call [LocalPersistanceStorage] WHEN data IS cached',
+      () async {
+        //arrange
+        when(
+          () => mockLocalPersistanceStorage.setString(
+            LocalPersistanceStorageKeys.cachedPosts.name,
+            any(),
+          ),
+        ).thenAnswer((_) async => true);
+        // Act
+        await localDataSource.cachePosts(tPostModels);
+        // Assert
+        final expectedJsonString = json.encode(
+          tPostModels.map((postModel) => postModel.toJson()).toList(),
+        );
+        verify(
+          () => mockLocalPersistanceStorage.setString(
+            LocalPersistanceStorageKeys.cachedPosts.name,
+            expectedJsonString,
+          ),
+        ).called(1);
       },
     );
   });

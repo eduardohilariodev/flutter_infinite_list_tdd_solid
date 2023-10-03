@@ -36,13 +36,18 @@ class PostLocalDataSourceImpl implements PostLocalDataSource {
 
   @override
   Future<void> cachePosts(List<PostModel> postsToCache) {
-    // TODO: implement cachePosts
-    throw UnimplementedError();
+    return localPersistanceStorage.setString(
+      LocalPersistanceStorageKeys.cachedPosts.name,
+      json.encode(
+        postsToCache.map((PostModel postModel) => postModel.toJson()).toList(),
+      ),
+    );
   }
 
   @override
   Future<List<PostModel>> getLastPosts() {
-    final jsonString = localPersistanceStorage.getString('CACHED_POSTS');
+    final jsonString = localPersistanceStorage
+        .getString(LocalPersistanceStorageKeys.cachedPosts.name);
     if (jsonString != null) {
       final jsonList = (json.decode(jsonString) as List<dynamic>)
           .map((dynamic item) => item as Map<String, dynamic>)
