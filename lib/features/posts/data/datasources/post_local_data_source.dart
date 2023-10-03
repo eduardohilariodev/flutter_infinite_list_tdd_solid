@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:flutter_infinite_list_tdd_solid/core/error/exceptions.dart';
+import 'package:flutter_infinite_list_tdd_solid/core/storage/local_persistance_storage.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/models/post_model.dart';
 
 /// Up until now, the methods we created were always about getting data, whether
@@ -23,4 +27,31 @@ abstract class PostLocalDataSource {
   ///
   /// Throws a [NoLocalDataException] if no cached data is present.
   Future<List<PostModel>> getLastPosts();
+}
+
+class PostLocalDataSourceImpl implements PostLocalDataSource {
+  PostLocalDataSourceImpl({required this.localPersistanceStorage});
+
+  final LocalPersistanceStorage localPersistanceStorage;
+
+  @override
+  Future<void> cachePosts(List<PostModel> postsToCache) {
+    // TODO: implement cachePosts
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<PostModel>> getLastPosts() {
+    final jsonString = localPersistanceStorage.getString('CACHED_POSTS');
+    if (jsonString != null) {
+      final jsonList = (json.decode(jsonString) as List<dynamic>)
+          .map((dynamic item) => item as Map<String, dynamic>)
+          .toList();
+
+      final postModelList = jsonList.map(PostModel.fromJson).toList();
+      return Future.value(postModelList);
+    } else {
+      throw CacheException();
+    }
+  }
 }
