@@ -1,4 +1,4 @@
-import 'package:flutter_infinite_list_tdd_solid/core/platform/network_info.dart';
+import 'package:flutter_infinite_list_tdd_solid/core/network/network_info.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/datasources/post_local_data_source.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/datasources/post_remote_data_source.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/repositories/post_repository_impl.dart';
