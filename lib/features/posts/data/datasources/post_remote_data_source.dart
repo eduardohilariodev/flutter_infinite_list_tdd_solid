@@ -2,7 +2,7 @@ import 'package:flutter_infinite_list_tdd_solid/core/error/exceptions.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/http_service.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/models/post_model.dart';
 
-abstract class PostRemoteDataSource {
+abstract interface class PostRemoteDataSource {
   /// Calls the https://jsonplaceholder.typicode.com/posts?_start={startIndex}&_limit={limitIndex}
   /// endpoint.
   ///
@@ -10,7 +10,7 @@ abstract class PostRemoteDataSource {
   Future<List<PostModel>> fetchPosts(int startIndex);
 }
 
-class PostRemoteDataSourceImpl implements PostRemoteDataSource {
+final class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   PostRemoteDataSourceImpl(this.httpService);
 
   final HttpService httpService;

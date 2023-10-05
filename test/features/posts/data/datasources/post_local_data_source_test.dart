@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter_infinite_list_tdd_solid/core/error/exceptions.dart';
-import 'package:flutter_infinite_list_tdd_solid/core/storage/local_persistance_storage.dart';
+import 'package:flutter_infinite_list_tdd_solid/core/storage/local_persistent_storage.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/datasources/post_local_data_source.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/models/post_model.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +12,7 @@ import 'package:mocktail/mocktail.dart';
 import '../../../../fixtures/fixture_reader.dart';
 
 class MockLocalPersistanceStorage extends Mock
-    implements LocalPersistanceStorage {}
+    implements LocalPersistentStorage {}
 
 void main() {
   late MockLocalPersistanceStorage mockLocalPersistanceStorage;
@@ -27,7 +27,7 @@ void main() {
   setUp(() {
     mockLocalPersistanceStorage = MockLocalPersistanceStorage();
     localDataSource = PostLocalDataSourceImpl(
-      localPersistanceStorage: mockLocalPersistanceStorage,
+      localPersistentStorage: mockLocalPersistanceStorage,
     );
   });
 
@@ -43,7 +43,7 @@ void main() {
         // Assert
         verify(
           () => mockLocalPersistanceStorage
-              .getString(LocalPersistanceStorageKeys.cachedPosts.name),
+              .getString(LocalPersistentStorageKeys.cachedPosts.name),
         ).called(1);
 
         expect(result, equals(tPostModels));
@@ -71,7 +71,7 @@ void main() {
         //arrange
         when(
           () => mockLocalPersistanceStorage.setString(
-            LocalPersistanceStorageKeys.cachedPosts.name,
+            LocalPersistentStorageKeys.cachedPosts.name,
             any(),
           ),
         ).thenAnswer((_) async => true);
@@ -83,7 +83,7 @@ void main() {
         );
         verify(
           () => mockLocalPersistanceStorage.setString(
-            LocalPersistanceStorageKeys.cachedPosts.name,
+            LocalPersistentStorageKeys.cachedPosts.name,
             expectedJsonString,
           ),
         ).called(1);

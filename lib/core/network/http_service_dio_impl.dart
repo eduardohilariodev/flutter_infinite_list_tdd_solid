@@ -2,8 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/exceptions.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/http_service.dart';
 
-final class DioClient implements HttpService {
-  DioClient(this.dio);
+final class HttpServiceDioImpl implements HttpService {
+  HttpServiceDioImpl(this.dio);
 
   final Dio dio;
 

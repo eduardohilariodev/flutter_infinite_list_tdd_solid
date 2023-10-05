@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_infinite_list_tdd_solid/core/error/exceptions.dart';
-import 'package:flutter_infinite_list_tdd_solid/core/storage/local_persistance_storage.dart';
+import 'package:flutter_infinite_list_tdd_solid/core/storage/local_persistent_storage.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/models/post_model.dart';
 
 /// Up until now, the methods we created were always about getting data, whether
@@ -19,7 +19,7 @@ import 'package:flutter_infinite_list_tdd_solid/features/posts/data/models/post_
 /// Data Source is an integer `Future<List<PostModel>> getPosts(int
 /// startIndex);` This coding practice allows you to swap the low-level http
 /// package for something like chopper without any significant issues.
-abstract class PostLocalDataSource {
+abstract interface class PostLocalDataSource {
   Future<void> cachePosts(List<PostModel> postsToCache);
 
   /// Gets the cached [List<PostModel>] which was gotten the last time
@@ -29,15 +29,15 @@ abstract class PostLocalDataSource {
   Future<List<PostModel>> getLastPosts();
 }
 
-class PostLocalDataSourceImpl implements PostLocalDataSource {
-  PostLocalDataSourceImpl({required this.localPersistanceStorage});
+final class PostLocalDataSourceImpl implements PostLocalDataSource {
+  PostLocalDataSourceImpl({required this.localPersistentStorage});
 
-  final LocalPersistanceStorage localPersistanceStorage;
+  final LocalPersistentStorage localPersistentStorage;
 
   @override
   Future<void> cachePosts(List<PostModel> postsToCache) {
-    return localPersistanceStorage.setString(
-      LocalPersistanceStorageKeys.cachedPosts.name,
+    return localPersistentStorage.setString(
+      LocalPersistentStorageKeys.cachedPosts.name,
       json.encode(
         postsToCache.map((PostModel postModel) => postModel.toJson()).toList(),
       ),
@@ -46,8 +46,8 @@ class PostLocalDataSourceImpl implements PostLocalDataSource {
 
   @override
   Future<List<PostModel>> getLastPosts() {
-    final jsonString = localPersistanceStorage
-        .getString(LocalPersistanceStorageKeys.cachedPosts.name);
+    final jsonString = localPersistentStorage
+        .getString(LocalPersistentStorageKeys.cachedPosts.name);
     if (jsonString != null) {
       final jsonList = (json.decode(jsonString) as List<dynamic>)
           .map((dynamic item) => item as Map<String, dynamic>)

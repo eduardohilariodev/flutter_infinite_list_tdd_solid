@@ -7,7 +7,7 @@ import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/p
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/repositories/post_repository.dart';
 
 /// The Repository needs lower level Data Sources to get the actual data from.
-class PostRepositoryImpl implements PostRepository {
+final class PostRepositoryImpl implements PostRepository {
   PostRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,

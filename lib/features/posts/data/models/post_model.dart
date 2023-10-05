@@ -1,6 +1,6 @@
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post.dart';
 
-class PostModel extends Post {
+final class PostModel extends Post {
   const PostModel({
     required super.id,
     required super.userId,

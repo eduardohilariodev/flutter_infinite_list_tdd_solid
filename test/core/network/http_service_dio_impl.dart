@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/exceptions.dart';
-import 'package:flutter_infinite_list_tdd_solid/core/network/dio_client.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/http_service.dart';
+import 'package:flutter_infinite_list_tdd_solid/core/network/http_service_dio_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -9,10 +9,10 @@ class MockDio extends Mock implements Dio {}
 
 void main() {
   late MockDio mockDio;
-  late DioClient dioClient;
+  late HttpServiceDioImpl dioClient;
   setUp(() async {
     mockDio = MockDio();
-    dioClient = DioClient(mockDio);
+    dioClient = HttpServiceDioImpl(mockDio);
   });
   group('get() | ', () {
     test(

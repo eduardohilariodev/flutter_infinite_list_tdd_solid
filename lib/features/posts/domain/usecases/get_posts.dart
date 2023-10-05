@@ -5,7 +5,7 @@ import 'package:flutter_infinite_list_tdd_solid/core/error/usecases.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/repositories/post_repository.dart';
 
-class GetPosts extends UseCase<List<Post>, Params> {
+final class GetPosts extends UseCase<List<Post>, Params> {
   GetPosts(this.repository);
 
   final PostRepository repository;
@@ -25,7 +25,7 @@ class GetPosts extends UseCase<List<Post>, Params> {
   }
 }
 
-class Params extends Equatable {
+final class Params extends Equatable {
   const Params({required this.startIndex});
 
   final int startIndex;
