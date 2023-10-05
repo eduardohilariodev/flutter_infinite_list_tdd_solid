@@ -1,9 +1,7 @@
-import 'package:flutter_infinite_list_tdd_solid/core/storage/local_persistent_storage.dart';
+import 'package:flutter_infinite_list_tdd_solid/core/storage/local_persistent_storage_shared_preferences_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:flutter_infinite_list_tdd_solid/core/storage/local_persistent_storage_shared_preferences_impl.dart';
 
 class MockSharedPreferences extends Mock implements SharedPreferences {}
 

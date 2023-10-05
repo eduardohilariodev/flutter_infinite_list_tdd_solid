@@ -12,16 +12,16 @@ class MockPostRemoteDataSource extends Mock implements PostRemoteDataSource {}
 class MockNetworkInfo extends Mock implements NetworkInfo {}
 
 void main() {
-  late PostRepositoryImpl repository;
   late MockPostLocalDataSource mockLocalDataSource;
   late MockPostRemoteDataSource mockRemoteDataSource;
   late MockNetworkInfo mockNetworkInfo;
+  late PostRepositoryImpl repositoryImpl;
 
   setUp(() {
     mockLocalDataSource = MockPostLocalDataSource();
     mockRemoteDataSource = MockPostRemoteDataSource();
     mockNetworkInfo = MockNetworkInfo();
-    repository = PostRepositoryImpl(
+    repositoryImpl = PostRepositoryImpl(
       localDataSource: mockLocalDataSource,
       remoteDataSource: mockRemoteDataSource,
       networkInfo: mockNetworkInfo,
