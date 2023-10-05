@@ -1,5 +1,15 @@
-import 'package:dio/dio.dart';
+import 'package:equatable/equatable.dart';
+
+final class HttpResponse extends Equatable {
+  const HttpResponse(this.data, this.statusCode);
+
+  final Map<String, dynamic> data;
+  final int statusCode;
+
+  @override
+  List<Object?> get props => [data, statusCode];
+}
 
 abstract class HttpService {
-  Future<Map<String, dynamic>> get(String url, {Map<String, dynamic>? headers});
+  Future<HttpResponse> get(String url, {Map<String, dynamic>? headers}) ;
 }
