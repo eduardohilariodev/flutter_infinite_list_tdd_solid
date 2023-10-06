@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_infinite_list_tdd_solid/core/error/exceptions.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/failures.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/network_info.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/datasources/post_local_data_source.dart';
@@ -20,11 +21,12 @@ final class PostRepositoryImpl implements PostRepository {
 
   @override
   Future<Either<Failure, List<Post>>> getPosts(int startIndex) async {
-    if (await networkInfo.isConnected) {
+    await networkInfo.isConnected;
+    try {
       final remotePosts = await remoteDataSource.fetchPosts(startIndex);
       await localDataSource.cachePosts(remotePosts);
       return Right(remotePosts);
-    } else {
+    } on ServerException {
       return Left(ServerFailure());
     }
   }

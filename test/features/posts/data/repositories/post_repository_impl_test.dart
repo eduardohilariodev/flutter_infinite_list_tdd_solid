@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_infinite_list_tdd_solid/core/error/exceptions.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/failures.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/network_info.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/datasources/post_local_data_source.dart';
@@ -98,6 +99,37 @@ void main() {
               expected.getOrElse(() => []),
             ),
             isTrue,
+          );
+        },
+      );
+
+      test(
+        'SHOULD cache data locally WHEN the call to remote IS succesful',
+        () async {
+          // Act
+          await repositoryImpl.getPosts(tStartIndex);
+          // Assert
+          verify(() => mockRemoteDataSource.fetchPosts(tStartIndex));
+          verify(() => mockLocalDataSource.cachePosts([tPostModel]));
+        },
+      );
+
+      test(
+        'SHOULD return [ServerFailure] WHEN the call to remote source IS unsuccesful',
+        () async {
+          // Arrange
+          when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+
+          when(() => mockRemoteDataSource.fetchPosts(any()))
+              .thenThrow(ServerException());
+          // Act
+          final result = await repositoryImpl.getPosts(tStartIndex);
+          // Assert
+          verify(() => mockRemoteDataSource.fetchPosts(tStartIndex));
+          verifyZeroInteractions(mockLocalDataSource);
+          expect(
+            result,
+            equals(Left<Failure, List<Post>>(ServerFailure())),
           );
         },
       );
