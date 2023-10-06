@@ -19,8 +19,13 @@ final class PostRepositoryImpl implements PostRepository {
   final PostRemoteDataSource remoteDataSource;
 
   @override
-  Future<Either<Failure, List<Post>>> getPosts(int startIndex) {
-    // TODO: implement getPosts
-    throw UnimplementedError();
+  Future<Either<Failure, List<Post>>> getPosts(int startIndex) async {
+    if (await networkInfo.isConnected) {
+      final remotePosts = await remoteDataSource.fetchPosts(startIndex);
+      await localDataSource.cachePosts(remotePosts);
+      return Right(remotePosts);
+    } else {
+      return Left(ServerFailure());
+    }
   }
 }

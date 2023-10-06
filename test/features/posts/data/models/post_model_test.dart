@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../../../fixtures/fixture_reader.dart';
 
 void main() {
+  const tPost = Post(id: 1, userId: 1, title: 'title', body: 'body');
   const tPostModel = PostModel(id: 1, userId: 1, title: 'title', body: 'body');
 
   /// Since the relation between the Model and the Entity is very important, we
@@ -18,6 +19,18 @@ void main() {
       expect(tPostModel, isA<Post>());
     },
   );
+  test(
+    'SHOULD have the same properties as the [Post] entity',
+    () async {
+      // Assert
+
+      expect(tPostModel.id, tPost.id);
+      expect(tPostModel.userId, tPost.userId);
+      expect(tPostModel.title, tPost.title);
+      expect(tPostModel.body, tPost.body);
+    },
+  );
+
 
   group('fromJson | ', () {
     test(
@@ -32,64 +45,6 @@ void main() {
         expect(result, tPostModel);
       },
     );
-
-    // test('Invalid JSON', () async {
-    //   final jsonMap =
-    //       json.decode(fixture('invalid_json.json')) as Map<String, dynamic>;
-    //   expect(
-    //     () => PostModel.fromJson(jsonMap),
-    //     throwsException,
-    //   ); // Replace with your actual exception
-    // });
-
-    // test('Null values', () async {
-    //   final jsonMap =
-    //       json.decode(fixture('null_values.json')) as Map<String, dynamic>;
-    //   expect(
-    //     () => PostModel.fromJson(jsonMap),
-    //     throwsException,
-    //   ); // Replace with your actual exception
-    // });
-
-    // test('Empty values', () async {
-    //   final jsonMap =
-    //       json.decode(fixture('empty_values.json')) as Map<String, dynamic>;
-    //   expect(
-    //     () => PostModel.fromJson(jsonMap),
-    //     throwsException,
-    //   ); // Replace with your actual exception
-    // });
-
-    // test('Extra fields', () async {
-    //   final jsonMap =
-    //       json.decode(fixture('extra_fields.json')) as Map<String, dynamic>;
-    //   final result = PostModel.fromJson(jsonMap);
-    //   // Assert that your model ignores extra fields, or however you handle this scenario
-    // });
-
-    // test('Missing fields', () async {
-    //   final jsonMap =
-    //       json.decode(fixture('missing_fields.json')) as Map<String, dynamic>;
-    //   expect(
-    //     () => PostModel.fromJson(jsonMap),
-    //     throwsException,
-    //   ); // Replace with your actual exception
-    // });
-
-    // test('Nested JSON', () async {
-    //   final jsonMap =
-    //       json.decode(fixture('nested_json.json')) as Map<String, dynamic>;
-    //   final result = PostModel.fromJson(jsonMap);
-    //   // Assert that your model can handle nested JSON, or however you handle this scenario
-    // });
-
-    // test('Array instead of Object', () async {
-    //   final jsonArray = json.decode(fixture('array_instead_of_object.json'));
-    //   expect(
-    //     () => PostModel.fromJson(jsonArray),
-    //     throwsException,
-    //   ); // Replace with your actual exception
-    // });
   });
   group('toJSON | ', () {
     test(
