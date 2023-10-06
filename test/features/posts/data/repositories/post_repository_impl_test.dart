@@ -22,6 +22,11 @@ class MockPostRemoteDataSource extends Mock implements PostRemoteDataSource {}
 class MockNetworkInfo extends Mock implements NetworkInfo {}
 
 void main() {
+  const tStartIndex = 0;
+  final tJson = json.decode(fixture('post.json')) as Map<String, dynamic>;
+  final tPostModel = PostModel.fromJson(tJson);
+  final tPost = tPostModel;
+
   late MockPostLocalDataSource mockLocalDataSource;
   late MockPostRemoteDataSource mockRemoteDataSource;
   late MockNetworkInfo mockNetworkInfo;
@@ -37,30 +42,39 @@ void main() {
       networkInfo: mockNetworkInfo,
     );
   });
-  test('Deep comparison of lists', () {
-    final list1 = [
-      const PostModel(id: 1, userId: 1, title: 'title', body: 'body'),
-    ];
-    final list2 = [
-      const PostModel(id: 1, userId: 1, title: 'title', body: 'body'),
-    ];
+  void expectPostListEquality(
+    Either<Failure, List<Post>> result,
+    List<Post> expected,
+  ) {
+    const listEquality = ListEquality<Post>();
+    expect(
+      listEquality.equals(
+        result.getOrElse(() => []),
+        expected,
+      ),
+      isTrue,
+    );
+  }
 
-    // Deep comparison
-    final isEqual = list1.length == list2.length &&
-        list1.asMap().entries.every((entry) {
-          final index = entry.key;
-          final post1 = entry.value;
-          final post2 = list2[index];
-          return post1 == post2;
-        });
+  void runTestsOnline(void Function() body) {
+    group('Device is online | ', () {
+      setUp(() async {
+        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      });
+      body();
+    });
+  }
 
-    expect(isEqual, true);
-  });
+  void runTestsOffline(void Function() body) {
+    group('Device is offline | ', () {
+      setUp(() async {
+        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+      });
+      body();
+    });
+  }
+
   group('getPosts | ', () {
-    const tStartIndex = 0;
-    final tJson = json.decode(fixture('post.json')) as Map<String, dynamic>;
-    final tPostModel = PostModel.fromJson(tJson);
-    final tPost = tPostModel;
     setUp(() async {
       when(() => mockRemoteDataSource.fetchPosts(any()))
           .thenAnswer((_) async => [tPostModel]);
@@ -78,11 +92,8 @@ void main() {
         verify(() => mockNetworkInfo.isConnected);
       },
     );
-    group('Device is online | ', () {
-      setUp(() async {
-        when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      });
 
+    runTestsOnline(() {
       test(
         'SHOULD return remote data WHEN the call to remote source IS succesful',
         () async {
@@ -91,15 +102,7 @@ void main() {
 
           // Assert
           verify(() => mockRemoteDataSource.fetchPosts(tStartIndex));
-          final expected = Right<Failure, List<Post>>([tPost]);
-          const listEquality = ListEquality<Post>();
-          expect(
-            listEquality.equals(
-              result.getOrElse(() => []),
-              expected.getOrElse(() => []),
-            ),
-            isTrue,
-          );
+          expectPostListEquality(result, [tPost]);
         },
       );
 
@@ -130,6 +133,41 @@ void main() {
           expect(
             result,
             equals(Left<Failure, List<Post>>(ServerFailure())),
+          );
+        },
+      );
+    });
+
+    runTestsOffline(() {
+      test(
+        'SHOULD return last cached data WHEN cached data IS present',
+        () async {
+          // Arrange
+          when(() => mockLocalDataSource.getLastPosts())
+              .thenAnswer((_) async => [tPostModel]);
+          // Act
+          final result = await repositoryImpl.getPosts(tStartIndex);
+          // Assert
+          verifyZeroInteractions(mockRemoteDataSource);
+          verify(() => mockLocalDataSource.getLastPosts());
+          expectPostListEquality(result, [tPost]);
+        },
+      );
+
+      test(
+        'SHOULD return a [CacheFailure] WHEN cached data IS NOT present',
+        () async {
+          // Arrange
+          when(() => mockLocalDataSource.getLastPosts())
+              .thenThrow(CacheException());
+          // Act
+          final result = await repositoryImpl.getPosts(tStartIndex);
+          // Assert
+          verifyZeroInteractions(mockRemoteDataSource);
+          verify(() => mockLocalDataSource.getLastPosts());
+          expect(
+            result,
+            equals(Left<Failure, List<Post>>(CacheFailure())),
           );
         },
       );
