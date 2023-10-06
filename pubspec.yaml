@@ -5,6 +5,7 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.1.2 <4.0.0'
 dependencies:
+  collection: ^1.17.2
   dartz: ^0.10.1
   dio: ^5.3.3
   equatable: ^2.0.5
@@ -17,6 +18,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  http_mock_adapter: ^0.6.0
   mocktail: ^1.0.1
   very_good_analysis: ^5.1.0
 flutter:

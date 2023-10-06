@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/failures.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/network_info.dart';
@@ -35,7 +36,25 @@ void main() {
       networkInfo: mockNetworkInfo,
     );
   });
+  test('Deep comparison of lists', () {
+    final list1 = [
+      const PostModel(id: 1, userId: 1, title: 'title', body: 'body'),
+    ];
+    final list2 = [
+      const PostModel(id: 1, userId: 1, title: 'title', body: 'body'),
+    ];
 
+    // Deep comparison
+    final isEqual = list1.length == list2.length &&
+        list1.asMap().entries.every((entry) {
+          final index = entry.key;
+          final post1 = entry.value;
+          final post2 = list2[index];
+          return post1 == post2;
+        });
+
+    expect(isEqual, true);
+  });
   group('getPosts | ', () {
     const tStartIndex = 0;
     final tJson = json.decode(fixture('post.json')) as Map<String, dynamic>;
@@ -66,15 +85,20 @@ void main() {
       test(
         'SHOULD return remote data WHEN the call to remote source IS succesful',
         () async {
-          when(() => mockRemoteDataSource.fetchPosts(any()))
-              .thenAnswer((_) async => [tPostModel]);
-          when(() => mockLocalDataSource.cachePosts(any()))
-              .thenAnswer((_) async => Future<void>.value());
           // Act
           final result = await repositoryImpl.getPosts(tStartIndex);
+
           // Assert
           verify(() => mockRemoteDataSource.fetchPosts(tStartIndex));
-          expect(result, equals(Right<Failure, List<Post>>([tPost])));
+          final expected = Right<Failure, List<Post>>([tPost]);
+          const listEquality = ListEquality<Post>();
+          expect(
+            listEquality.equals(
+              result.getOrElse(() => []),
+              expected.getOrElse(() => []),
+            ),
+            isTrue,
+          );
         },
       );
     });
