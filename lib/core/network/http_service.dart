@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 
 abstract interface class HttpService {
-  Future<HttpResponse> get(String url, {Map<String, dynamic>? headers});
+  Future<HttpResponse<T>> get<T>(String url, {Map<String, dynamic>? headers});
 }
 
-final class HttpResponse extends Equatable {
+final class HttpResponse<T> extends Equatable {
   const HttpResponse(this.data, this.statusCode);
 
-  final Map<String, dynamic> data;
+  final T data;
   final int statusCode;
 
   @override

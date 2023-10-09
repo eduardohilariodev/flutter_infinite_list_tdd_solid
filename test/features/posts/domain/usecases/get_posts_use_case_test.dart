@@ -17,7 +17,9 @@ void main() {
     getPosts = GetPostsUseCase(mockPostRepository);
   });
 
-  const tStartIndex = 1;
+  const tStartIndex = 0;
+  const tLimitIndex = 1;
+
   const tId = 1;
   const tUserId = 1;
   const tTitle = 'title';
@@ -34,19 +36,21 @@ void main() {
       // the Right "side" of Either containing a test [List<Post>] object.
       // when(mockPostRepository.getPosts(any))
       //     .thenAnswer((realInvocation) async => const Right(tPost));
-      when(() => mockPostRepository.getPosts(any()))
+      when(() => mockPostRepository.getPosts(any(), any()))
           .thenAnswer((_) async => const Right([tPost]));
 
       /// Act
       // The "act" phase of the test. Call the not-yet-existent method.
-      final result = await getPosts(const Params(startIndex: tStartIndex));
+      final result = await getPosts(
+          const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),);
 
       /// Assert
       // UseCase should simply return whatever was returned from the Repository
       expect(result, const Right<Failure, List<PostEntity>>([tPost]));
 
       // Verify that the method has been called on the Repository
-      verify(() => mockPostRepository.getPosts(tStartIndex)).called(1);
+      verify(() => mockPostRepository.getPosts(tStartIndex, tLimitIndex))
+          .called(1);
       // Only the above method should be called and nothing more.
       verifyNoMoreInteractions(mockPostRepository);
     },

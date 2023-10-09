@@ -11,7 +11,8 @@ part 'post_event.dart';
 part 'post_state.dart';
 part 'post_bloc.freezed.dart';
 
-const throttleDuration = Duration(milliseconds: 50);
+const _throttleDuration = Duration(milliseconds: 100);
+const _limitIndex = 20;
 
 class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc({required GetPostsUseCase getPostsUseCase})
@@ -19,7 +20,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         super(const PostState()) {
     on<PostFetchedEvent>(
       _onPostFetched,
-      transformer: throttleDroppable(throttleDuration),
+      transformer: throttleDroppable(_throttleDuration),
     );
   }
 
@@ -34,6 +35,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     final failureOrPosts = await _getPostsUseCase(
       Params(
         startIndex: state.posts.length,
+        limitIndex: _limitIndex,
       ),
     );
 

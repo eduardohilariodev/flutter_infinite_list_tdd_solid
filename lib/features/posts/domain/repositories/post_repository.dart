@@ -6,5 +6,8 @@ import 'package:fpdart/fpdart.dart';
 /// an Internet connection (and then to cache it locally), or to get the cached
 /// data when the user is offline.
 abstract interface class PostRepository {
-  Future<Either<Failure, List<PostEntity>>> getPosts(int startIndex);
+  Future<Either<Failure, List<PostEntity>>> getPosts(
+    int startIndex,
+    int limitIndex,
+  );
 }

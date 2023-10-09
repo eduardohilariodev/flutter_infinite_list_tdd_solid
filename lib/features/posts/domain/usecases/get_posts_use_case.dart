@@ -21,15 +21,16 @@ interface class GetPostsUseCase extends UseCase<List<PostEntity>, Params> {
   /// should be the same to prevent any confusion.
   @override
   Future<Either<Failure, List<PostEntity>>> call(Params params) async {
-    return repository.getPosts(params.startIndex);
+    return repository.getPosts(params.startIndex, params.limitIndex);
   }
 }
 
 final class Params extends Equatable {
-  const Params({required this.startIndex});
+  const Params({required this.startIndex, required this.limitIndex});
 
   final int startIndex;
+  final int limitIndex;
 
   @override
-  List<Object?> get props => [startIndex];
+  List<Object?> get props => [startIndex, limitIndex];
 }

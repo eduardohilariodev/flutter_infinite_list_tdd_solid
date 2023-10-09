@@ -8,14 +8,19 @@ final class HttpServiceDioImpl implements HttpService {
   final Dio dio;
 
   @override
-  Future<HttpResponse> get(
+  Future<HttpResponse<T>> get<T>(
     String url, {
     Map<String, dynamic>? headers,
   }) async {
-    final response = await dio.get<Map<String, dynamic>>(url);
+    final response = await dio.get<T>(
+      url,
+      options: Options(
+        headers: headers,
+      ),
+    );
     if (response.statusCode != 200) {
       throw ServerException();
     }
-    return HttpResponse(response.data!, response.statusCode!);
+    return HttpResponse(response.data as T, response.statusCode!);
   }
 }

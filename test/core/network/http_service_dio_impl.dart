@@ -29,7 +29,7 @@ void main() {
           ),
         );
         // Act
-        final result = await dioClient.get('');
+        final result = await dioClient.get<Map<String, dynamic>>('');
         // Assert
         expect(result, equals(mockResponse));
         verify(() => mockDio.get<Map<String, dynamic>>(any())).called(1);
@@ -48,7 +48,7 @@ void main() {
           ),
         );
         // Act
-        final call = dioClient.get;
+        final call = dioClient.get<Map<String, dynamic>>;
         // Assert
         expect(call(''), throwsA(isA<ServerException>()));
       },

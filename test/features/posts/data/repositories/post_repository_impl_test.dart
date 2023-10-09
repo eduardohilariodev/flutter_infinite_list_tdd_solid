@@ -23,6 +23,7 @@ class MockNetworkInfo extends Mock implements NetworkInfo {}
 
 void main() {
   const tStartIndex = 0;
+  const tLimitIndex = 1;
   final tJson = json.decode(fixture('post.json')) as Map<String, dynamic>;
   final tPostModel = PostModel.fromJson(tJson);
   final tPost = tPostModel;
@@ -63,7 +64,7 @@ void main() {
 
   group('getPosts | ', () {
     setUp(() async {
-      when(() => mockRemoteDataSource.fetchPosts(any()))
+      when(() => mockRemoteDataSource.fetchPosts(any(), any()))
           .thenAnswer((_) async => [tPostModel]);
       when(() => mockLocalDataSource.cachePosts(any()))
           .thenAnswer((_) async => Future<void>.value());
@@ -74,7 +75,7 @@ void main() {
         // Arrange
         when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
         // Act
-        await repositoryImpl.getPosts(tStartIndex);
+        await repositoryImpl.getPosts(tStartIndex, tLimitIndex);
         // Assert
         verify(() => mockNetworkInfo.isConnected);
       },
@@ -85,10 +86,13 @@ void main() {
         'SHOULD return remote data WHEN the call to remote source IS succesful',
         () async {
           // Act
-          final result = await repositoryImpl.getPosts(tStartIndex);
+          final result =
+              await repositoryImpl.getPosts(tStartIndex, tLimitIndex);
 
           // Assert
-          verify(() => mockRemoteDataSource.fetchPosts(tStartIndex));
+          verify(
+            () => mockRemoteDataSource.fetchPosts(tStartIndex, tLimitIndex),
+          );
           final deepCollectionEquality = const DeepCollectionEquality()
               .equals(result.getOrElse((failure) => []), [tPost]);
           expect(deepCollectionEquality, isTrue);
@@ -99,9 +103,11 @@ void main() {
         'SHOULD cache data locally WHEN the call to remote IS succesful',
         () async {
           // Act
-          await repositoryImpl.getPosts(tStartIndex);
+          await repositoryImpl.getPosts(tStartIndex, tLimitIndex);
           // Assert
-          verify(() => mockRemoteDataSource.fetchPosts(tStartIndex));
+          verify(
+            () => mockRemoteDataSource.fetchPosts(tStartIndex, tLimitIndex),
+          );
           verify(() => mockLocalDataSource.cachePosts([tPostModel]));
         },
       );
@@ -110,12 +116,15 @@ void main() {
         'SHOULD return [ServerFailure] WHEN the call to remote source IS unsuccesful',
         () async {
           // Arrange
-          when(() => mockRemoteDataSource.fetchPosts(any()))
+          when(() => mockRemoteDataSource.fetchPosts(any(), any()))
               .thenThrow(ServerException());
           // Act
-          final result = await repositoryImpl.getPosts(tStartIndex);
+          final result =
+              await repositoryImpl.getPosts(tStartIndex, tLimitIndex);
           // Assert
-          verify(() => mockRemoteDataSource.fetchPosts(tStartIndex));
+          verify(
+            () => mockRemoteDataSource.fetchPosts(tStartIndex, tLimitIndex),
+          );
           verifyZeroInteractions(mockLocalDataSource);
           expect(
             result,
@@ -133,7 +142,8 @@ void main() {
           when(() => mockLocalDataSource.getLastPosts())
               .thenAnswer((_) async => [tPostModel]);
           // Act
-          final result = await repositoryImpl.getPosts(tStartIndex);
+          final result =
+              await repositoryImpl.getPosts(tStartIndex, tLimitIndex);
           // Assert
           verifyZeroInteractions(mockRemoteDataSource);
           verify(() => mockLocalDataSource.getLastPosts());
@@ -150,7 +160,8 @@ void main() {
           when(() => mockLocalDataSource.getLastPosts())
               .thenThrow(CacheException());
           // Act
-          final result = await repositoryImpl.getPosts(tStartIndex);
+          final result =
+              await repositoryImpl.getPosts(tStartIndex, tLimitIndex);
           // Assert
           verifyZeroInteractions(mockRemoteDataSource);
           verify(() => mockLocalDataSource.getLastPosts());

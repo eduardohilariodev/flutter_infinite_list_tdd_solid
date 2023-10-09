@@ -20,10 +20,12 @@ final class PostRepositoryImpl implements PostRepository {
   final PostRemoteDataSource remoteDataSource;
 
   @override
-  Future<Either<Failure, List<PostEntity>>> getPosts(int startIndex) async {
+  Future<Either<Failure, List<PostEntity>>> getPosts(
+      int startIndex, int limitIndex,) async {
     if (await networkInfo.isConnected) {
       try {
-        final remotePosts = await remoteDataSource.fetchPosts(startIndex);
+        final remotePosts =
+            await remoteDataSource.fetchPosts(startIndex, limitIndex);
         await localDataSource.cachePosts(remotePosts);
         return Right(remotePosts);
       } on ServerException {

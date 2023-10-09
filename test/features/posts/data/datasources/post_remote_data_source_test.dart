@@ -21,29 +21,36 @@ void main() {
   });
 
   const tStartIndex = 0;
-  final tJson = json.decode(fixture('post.json')) as Map<String, dynamic>;
-  final tPostModel = PostModel.fromJson(tJson);
-  final tPostModelList = [tPostModel];
-  final mockResponse = HttpResponse(tJson, 200);
+  const tLimitIndex = 1;
+  final tJsonList = (json.decode(fixture('posts.json')) as List)
+      .map((item) => item as Map<String, dynamic>)
+      .toList();
+  final tPostModelList = tJsonList.map(PostModel.fromJson).toList();
+  final mockResponse = HttpResponse(tJsonList, 200);
+
   test(
     'should preform a GET request on a URL with number being the endpoint and with application/json header',
     () async {
       //arrange
 
-      when(() => mockHttpService.get(any(), headers: any(named: 'headers')))
-          .thenAnswer(
+      when(
+        () => mockHttpService.get<List<Map<String, dynamic>>>(
+          any(),
+          headers: any(named: 'headers'),
+        ),
+      ).thenAnswer(
         (_) async => mockResponse,
       ); // Make sure to return a Future<HttpResponse>
 
       // act
-      await dataSource.fetchPosts(tStartIndex);
+      await dataSource.fetchPosts(tStartIndex, tLimitIndex);
       // assert
       verify(
-        () => mockHttpService.get(
-          'https://jsonplaceholder.typicode.com/posts?_start=$tStartIndex&_limit=1',
+        () => mockHttpService.get<List<Map<String, dynamic>>>(
+          'https://jsonplaceholder.typicode.com/posts?_start=$tStartIndex&_limit=$tLimitIndex',
           headers: {'Content-Type': 'application/json'},
         ),
-      ).called(1);
+      );
     },
   );
 
@@ -51,12 +58,16 @@ void main() {
     'SHOULD return List<PostModel> WHEN response code IS 200',
     () async {
       // Arrange
-      when(() => mockHttpService.get(any(), headers: any(named: 'headers')))
-          .thenAnswer(
+      when(
+        () => mockHttpService.get<List<Map<String, dynamic>>>(
+          any(),
+          headers: any(named: 'headers'),
+        ),
+      ).thenAnswer(
         (_) async => mockResponse,
       );
       // Act
-      final result = await dataSource.fetchPosts(tStartIndex);
+      final result = await dataSource.fetchPosts(tStartIndex, tLimitIndex);
       // Assert
       expect(result, equals(tPostModelList));
     },
@@ -66,15 +77,19 @@ void main() {
     'SHOULD throw a [ServerException] WHEN the response code IS not 200',
     () async {
       // Arrange
-      when(() => mockHttpService.get(any(), headers: any(named: 'headers')))
-          .thenAnswer(
-        (_) async => const HttpResponse({}, 404),
+      when(
+        () => mockHttpService.get<List<Map<String, dynamic>>>(
+          any(),
+          headers: any(named: 'headers'),
+        ),
+      ).thenAnswer(
+        (_) async => const HttpResponse([], 404),
       );
       // Act
       final call = dataSource.fetchPosts;
       // Assert
       await expectLater(
-        () => call(tStartIndex),
+        () => call(tStartIndex, tLimitIndex),
         throwsA(isA<ServerException>()),
       );
     },

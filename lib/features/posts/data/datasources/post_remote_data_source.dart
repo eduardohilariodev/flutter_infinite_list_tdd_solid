@@ -7,7 +7,7 @@ abstract interface class PostRemoteDataSource {
   /// endpoint.
   ///
   /// Throws a [ServerException] for all error codes.
-  Future<List<PostModel>> fetchPosts(int startIndex);
+  Future<List<PostModel>> fetchPosts(int startIndex, int limitIndex);
 }
 
 final class PostRemoteDataSourceImpl implements PostRemoteDataSource {
@@ -16,15 +16,15 @@ final class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   final HttpService httpService;
 
   @override
-  Future<List<PostModel>> fetchPosts(int startIndex) async {
-    final response = await httpService.get(
-      'https://jsonplaceholder.typicode.com/posts?_start=$startIndex&_limit=1',
+  Future<List<PostModel>> fetchPosts(int startIndex, int limitIndex) async {
+    final response = await httpService.get<List<Map<String, dynamic>>>(
+      'https://jsonplaceholder.typicode.com/posts?_start=$startIndex&_limit=$limitIndex',
       headers: {'Content-Type': 'application/json'},
     );
     if (response.statusCode == 200) {
-      final json = response.data;
-      final postModel = PostModel.fromJson(json);
-      return [postModel];
+      final jsonList = response.data;
+      final postModelList = jsonList.map(PostModel.fromJson).toList();
+      return postModelList;
     } else {
       throw ServerException();
     }

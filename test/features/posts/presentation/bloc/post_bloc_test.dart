@@ -15,6 +15,7 @@ class MockGetPostsUseCase extends Mock implements GetPostsUseCase {}
 
 void main() {
   const tStartIndex = 0;
+  const tLimitIndex = 1;
   final tJson = json.decode(fixture('post.json')) as Map<String, dynamic>;
   final tPostModel = PostModel.fromJson(tJson);
   final tPost = tPostModel;
@@ -38,22 +39,30 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD get data WHEN calling UseCase IS succesful',
       build: () {
-        when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
-            .thenAnswer((_) async => Right([tPost]));
+        when(
+          () => mockGetPostsUseCase(
+            const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
+          ),
+        ).thenAnswer((_) async => Right([tPost]));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
       verify: (_) {
         verify(
-          () => mockGetPostsUseCase(const Params(startIndex: tStartIndex)),
+          () => mockGetPostsUseCase(
+            const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
+          ),
         );
       },
     );
     blocTest<PostBloc, PostState>(
       'SHOULD emit [loading, success] WHEN getting data IS succesful',
       build: () {
-        when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
-            .thenAnswer((_) async => Right([tPost]));
+        when(
+          () => mockGetPostsUseCase(
+            const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
+          ),
+        ).thenAnswer((_) async => Right([tPost]));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
@@ -66,8 +75,11 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD emit [loading, failure] WHEN getting remote data IS NOT succesful',
       build: () {
-        when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
-            .thenAnswer((_) async => Left(ServerFailure()));
+        when(
+          () => mockGetPostsUseCase(
+            const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
+          ),
+        ).thenAnswer((_) async => Left(ServerFailure()));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
@@ -80,8 +92,11 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD emit [loading, failure] WHEN getting local data IS NOT succesful',
       build: () {
-        when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
-            .thenAnswer((_) async => Left(CacheFailure()));
+        when(
+          () => mockGetPostsUseCase(
+            const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
+          ),
+        ).thenAnswer((_) async => Left(CacheFailure()));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
@@ -94,8 +109,11 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD return no more data WHEN hasReachedMax IS true',
       build: () {
-        when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
-            .thenAnswer((_) async => const Right([]));
+        when(
+          () => mockGetPostsUseCase(
+            const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
+          ),
+        ).thenAnswer((_) async => const Right([]));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
@@ -118,8 +136,11 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD throttle and drop events WHEN events are fired rapidly',
       build: () {
-        when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
-            .thenAnswer((_) async => Right([tPost]));
+        when(
+          () => mockGetPostsUseCase(
+            const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
+          ),
+        ).thenAnswer((_) async => Right([tPost]));
         return bloc;
       },
       act: (bloc) async => addFiveEvents(),
