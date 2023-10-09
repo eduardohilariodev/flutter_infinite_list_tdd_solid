@@ -90,5 +90,43 @@ void main() {
         const PostState(status: PostStatus.failure, message: 'Cache Failure'),
       ],
     );
+
+    blocTest<PostBloc, PostState>(
+      'SHOULD return no more data WHEN hasReachedMax IS true',
+      build: () {
+        when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
+            .thenAnswer((_) async => const Right([]));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(PostFetchedEvent()),
+      expect: () => [
+        const PostState(status: PostStatus.loading),
+        const PostState(status: PostStatus.success, hasReachedMax: true),
+      ],
+    );
+
+    Future<void> addFiveEvents() async {
+      for (var i = 0; i < 5; i++) {
+        bloc.add(PostFetchedEvent());
+        await Future<Duration>.delayed(
+          const Duration(milliseconds: 20),
+          () => Duration.zero,
+        );
+      }
+    }
+
+    blocTest<PostBloc, PostState>(
+      'SHOULD throttle and drop events WHEN events are fired rapidly',
+      build: () {
+        when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
+            .thenAnswer((_) async => Right([tPost]));
+        return bloc;
+      },
+      act: (bloc) async => addFiveEvents(),
+      expect: () => [
+        const PostState(status: PostStatus.loading),
+        PostState(status: PostStatus.success, posts: [tPost]),
+      ],
+    );
   });
 }

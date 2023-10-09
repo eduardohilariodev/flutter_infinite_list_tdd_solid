@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_infinite_list_tdd_solid/core/bloc/event_transformers.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/failures.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post_entity.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/usecases/get_posts_use_case.dart';
@@ -9,41 +11,51 @@ part 'post_event.dart';
 part 'post_state.dart';
 part 'post_bloc.freezed.dart';
 
+const throttleDuration = Duration(milliseconds: 50);
+
 class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc({required GetPostsUseCase getPostsUseCase})
       : _getPostsUseCase = getPostsUseCase,
         super(const PostState()) {
-    on<PostFetchedEvent>((event, emit) async {
-      if (state.hasReachedMax) return;
-      emit(state.copyWith(status: PostStatus.loading));
-      final failureOrPosts = await _getPostsUseCase(
-        Params(
-          startIndex: state.posts.length,
-        ),
-      );
-
-      failureOrPosts.fold(
-        (failure) {
-          emit(
-            state.copyWith(
-              status: PostStatus.failure,
-              message: switch (failure) {
-                ServerFailure() => 'Server Failure',
-                CacheFailure() => 'Cache Failure',
-              },
-            ),
-          );
-        },
-        (posts) => emit(
-          state.copyWith(
-            status: PostStatus.success,
-            posts: List.from(state.posts)..addAll(posts),
-            hasReachedMax: posts.isEmpty,
-          ),
-        ),
-      );
-    });
+    on<PostFetchedEvent>(
+      _onPostFetched,
+      transformer: throttleDroppable(throttleDuration),
+    );
   }
 
   final GetPostsUseCase _getPostsUseCase;
+
+  FutureOr<void> _onPostFetched(
+    PostFetchedEvent event,
+    Emitter<PostState> emit,
+  ) async {
+    if (state.hasReachedMax) return;
+    emit(state.copyWith(status: PostStatus.loading));
+    final failureOrPosts = await _getPostsUseCase(
+      Params(
+        startIndex: state.posts.length,
+      ),
+    );
+
+    failureOrPosts.fold(
+      (failure) {
+        emit(
+          state.copyWith(
+            status: PostStatus.failure,
+            message: switch (failure) {
+              ServerFailure() => 'Server Failure',
+              CacheFailure() => 'Cache Failure',
+            },
+          ),
+        );
+      },
+      (posts) => emit(
+        state.copyWith(
+          status: PostStatus.success,
+          posts: List.of(state.posts)..addAll(posts),
+          hasReachedMax: posts.isEmpty,
+        ),
+      ),
+    );
+  }
 }
