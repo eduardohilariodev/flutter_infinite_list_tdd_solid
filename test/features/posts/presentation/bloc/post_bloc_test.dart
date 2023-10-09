@@ -15,10 +15,11 @@ class MockGetPostsUseCase extends Mock implements GetPostsUseCase {}
 
 void main() {
   const tStartIndex = 0;
-  const tLimitIndex = 1;
-  final tJson = json.decode(fixture('post.json')) as Map<String, dynamic>;
-  final tPostModel = PostModel.fromJson(tJson);
-  final tPost = tPostModel;
+  const tLimitIndex = 5;
+  final tJsonList = (json.decode(fixture('posts.json')) as List)
+      .map((item) => item as Map<String, dynamic>)
+      .toList();
+  final tPostModelList = tJsonList.map(PostModel.fromJson).toList();
 
   late PostBloc bloc;
   late MockGetPostsUseCase mockGetPostsUseCase;
@@ -31,11 +32,10 @@ void main() {
     );
   });
 
-  test('initialState is correct', () {
-    expect(bloc.state, const PostState());
-  });
-
   group('PostFetched | ', () {
+    test('initialState is correct', () {
+      expect(bloc.state, const PostState());
+    });
     blocTest<PostBloc, PostState>(
       'SHOULD get data WHEN calling UseCase IS succesful',
       build: () {
@@ -43,17 +43,15 @@ void main() {
           () => mockGetPostsUseCase(
             const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
           ),
-        ).thenAnswer((_) async => Right([tPost]));
+        ).thenAnswer((_) async => Right(tPostModelList));
+        print(Right(tPostModelList));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
-      verify: (_) {
-        verify(
-          () => mockGetPostsUseCase(
-            const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
-          ),
-        );
-      },
+      expect: () => [
+        const PostState(status: PostStatus.loading),
+        PostState(status: PostStatus.success, posts: tPostModelList),
+      ],
     );
     blocTest<PostBloc, PostState>(
       'SHOULD emit [loading, success] WHEN getting data IS succesful',
@@ -62,13 +60,13 @@ void main() {
           () => mockGetPostsUseCase(
             const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
           ),
-        ).thenAnswer((_) async => Right([tPost]));
+        ).thenAnswer((_) async => Right(tPostModelList));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
       expect: () => [
         const PostState(status: PostStatus.loading),
-        PostState(status: PostStatus.success, posts: [tPost]),
+        PostState(status: PostStatus.success, posts: tPostModelList),
       ],
     );
 
@@ -140,13 +138,13 @@ void main() {
           () => mockGetPostsUseCase(
             const Params(startIndex: tStartIndex, limitIndex: tLimitIndex),
           ),
-        ).thenAnswer((_) async => Right([tPost]));
+        ).thenAnswer((_) async => Right(tPostModelList));
         return bloc;
       },
       act: (bloc) async => addFiveEvents(),
       expect: () => [
         const PostState(status: PostStatus.loading),
-        PostState(status: PostStatus.success, posts: [tPost]),
+        PostState(status: PostStatus.success, posts: tPostModelList),
       ],
     );
   });
