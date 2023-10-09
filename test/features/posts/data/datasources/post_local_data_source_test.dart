@@ -27,7 +27,7 @@ void main() {
   setUp(() {
     mockLocalPersistanceStorage = MockLocalPersistanceStorage();
     localDataSource = PostLocalDataSourceImpl(
-      localPersistentStorage: mockLocalPersistanceStorage,
+      mockLocalPersistanceStorage,
     );
   });
 

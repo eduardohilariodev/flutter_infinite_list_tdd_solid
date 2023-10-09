@@ -30,7 +30,7 @@ abstract interface class PostLocalDataSource {
 }
 
 final class PostLocalDataSourceImpl implements PostLocalDataSource {
-  PostLocalDataSourceImpl({required this.localPersistentStorage});
+  PostLocalDataSourceImpl(this.localPersistentStorage);
 
   final LocalPersistentStorage localPersistentStorage;
 
