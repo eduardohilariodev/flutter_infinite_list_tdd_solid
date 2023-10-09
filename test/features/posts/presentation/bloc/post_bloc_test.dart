@@ -36,7 +36,7 @@ void main() {
 
   group('PostFetched | ', () {
     blocTest<PostBloc, PostState>(
-      'SHOULD get data WHEN UseCase IS called',
+      'SHOULD get data WHEN calling UseCase IS succesful',
       build: () {
         when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
             .thenAnswer((_) async => Right([tPost]));
@@ -50,7 +50,7 @@ void main() {
       },
     );
     blocTest<PostBloc, PostState>(
-      'SHOULD emit [loading, success] WHEN data IS fetched',
+      'SHOULD emit [loading, success] WHEN getting data IS succesful',
       build: () {
         when(() => mockGetPostsUseCase(const Params(startIndex: tStartIndex)))
             .thenAnswer((_) async => Right([tPost]));
