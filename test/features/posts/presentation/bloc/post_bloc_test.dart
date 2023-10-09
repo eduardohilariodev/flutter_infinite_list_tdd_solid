@@ -41,9 +41,8 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD get data WHEN calling UseCase IS succesful',
       build: () {
-        when(
-          () => mockGetPostsUseCase( any()),
-        ).thenAnswer((_) async => Right(tPostModelList));
+        when(() => mockGetPostsUseCase(any()))
+            .thenAnswer((_) async => Right(tPostModelList));
         return bloc;
       },
       act: (bloc) {
@@ -57,9 +56,8 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD emit [loading, success] WHEN getting data IS succesful',
       build: () {
-        when(
-          () => mockGetPostsUseCase(any()),
-        ).thenAnswer((_) async => Right(tPostModelList));
+        when(() => mockGetPostsUseCase(any()))
+            .thenAnswer((_) async => Right(tPostModelList));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
@@ -72,9 +70,8 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD emit [loading, failure] WHEN getting remote data IS NOT succesful',
       build: () {
-        when(
-          () => mockGetPostsUseCase(any()),
-        ).thenAnswer((_) async => Left(ServerFailure()));
+        when(() => mockGetPostsUseCase(any()))
+            .thenAnswer((_) async => Left(ServerFailure()));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
@@ -87,9 +84,8 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD emit [loading, failure] WHEN getting local data IS NOT succesful',
       build: () {
-        when(
-          () => mockGetPostsUseCase(any()),
-        ).thenAnswer((_) async => Left(CacheFailure()));
+        when(() => mockGetPostsUseCase(any()))
+            .thenAnswer((_) async => Left(CacheFailure()));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
@@ -102,9 +98,8 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD return no more data WHEN hasReachedMax IS true',
       build: () {
-        when(
-          () => mockGetPostsUseCase(any()),
-        ).thenAnswer((_) async => const Right([]));
+        when(() => mockGetPostsUseCase(any()))
+            .thenAnswer((_) async => const Right([]));
         return bloc;
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
@@ -127,9 +122,8 @@ void main() {
     blocTest<PostBloc, PostState>(
       'SHOULD throttle and drop events WHEN events are fired rapidly',
       build: () {
-        when(
-          () => mockGetPostsUseCase(any()),
-        ).thenAnswer((_) async => Right(tPostModelList));
+        when(() => mockGetPostsUseCase(any()))
+            .thenAnswer((_) async => Right(tPostModelList));
         return bloc;
       },
       act: (bloc) async => addFiveEvents(),

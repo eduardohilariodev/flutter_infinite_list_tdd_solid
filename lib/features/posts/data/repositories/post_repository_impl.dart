@@ -24,7 +24,6 @@ final class PostRepositoryImpl implements PostRepository {
     int startIndex,
     int limitIndex,
   ) async {
-    print('test');
     if (await networkInfo.isConnected) {
       try {
         final remotePosts =

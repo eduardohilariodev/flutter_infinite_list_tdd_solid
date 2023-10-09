@@ -12,7 +12,7 @@ part 'post_state.dart';
 part 'post_bloc.freezed.dart';
 
 const _throttleDuration = Duration(milliseconds: 200);
-const _limitIndex = 1;
+const _limitIndex = 20;
 
 class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc({required GetPostsUseCase getPostsUseCase})
