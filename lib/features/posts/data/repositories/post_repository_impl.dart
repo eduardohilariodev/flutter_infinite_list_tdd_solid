@@ -21,7 +21,10 @@ final class PostRepositoryImpl implements PostRepository {
 
   @override
   Future<Either<Failure, List<PostEntity>>> getPosts(
-      int startIndex, int limitIndex,) async {
+    int startIndex,
+    int limitIndex,
+  ) async {
+    print('test');
     if (await networkInfo.isConnected) {
       try {
         final remotePosts =
