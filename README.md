@@ -34,13 +34,15 @@
   - [Test-Driven Development](#test-driven-development)
     - [Files that are **NOT** going to be written in a TDD manner:](#files-that-are-not-going-to-be-written-in-a-tdd-manner)
   - [Implement the `domain` layer](#implement-the-domain-layer)
-    - [- Implement `entity` classes](#--implement-entity-classes)
-    - [- Implement `failure` classes In order to not have to deal with exceptions, we](#--implement-failure-classes-in-order-to-not-have-to-deal-with-exceptions-we)
-    - [- Implement the `repository` contract on the `domain` layer](#--implement-the-repository-contract-on-the-domain-layer)
-    - [- Implement the `usecase` for each `repository` method](#--implement-the-usecase-for-each-repository-method)
+    - [- Add `entity` classes](#--add-entity-classes)
+    - [- Add `failure` classes In order to not have to deal with exceptions, we](#--add-failure-classes-in-order-to-not-have-to-deal-with-exceptions-we)
+    - [- Add the `repository` contract on the `domain` layer](#--add-the-repository-contract-on-the-domain-layer)
+    - [- Add the `usecase` for each `repository` method](#--add-the-usecase-for-each-repository-method)
   - [Implement the `data` layer](#implement-the-data-layer)
-    - [- Implement `model`](#--implement-model)
-    - [- Implement `repository` concrete implementation](#--implement-repository-concrete-implementation)
+    - [- Add `model`](#--add-model)
+    - [- Add `repository` concrete implementation](#--add-repository-concrete-implementation)
+  - [Implement the `presentation` layer](#implement-the-presentation-layer)
+    - [- Add `bloc` classes](#--add-bloc-classes)
 
 Step-by-step overview guide on implementing a new feature
 
@@ -63,7 +65,7 @@ Step-by-step overview guide on implementing a new feature
 
 ## Implement the `domain` layer
 
-### - Implement `entity` classes
+### - Add `entity` classes
 
 > **Q&A on `entity`:**
 >
@@ -71,13 +73,13 @@ Step-by-step overview guide on implementing a new feature
 > - **A:** To find out which fields `entity` classes must have, we have to
 >   take a look at the response from the API.
 
-### - Implement `failure` classes In order to not have to deal with exceptions, we
+### - Add `failure` classes In order to not have to deal with exceptions, we
 
 implement `failure` classes. They use the package `dartz`, that brings the
 `Either` type to Dart. `failure` classes return an `Either` with a `Failure`
 and the object with the wanted data.
 
-### - Implement the `repository` contract on the `domain` layer
+### - Add the `repository` contract on the `domain` layer
 
 > **Q&A on `repository` contract:**
 >
@@ -94,7 +96,7 @@ and the object with the wanted data.
 >   that the `repository` class (on the `data` layer) will have to implement.
 >   It's a contract that defines what the `repository` class will have to do.
 
-### - Implement the `usecase` for each `repository` method
+### - Add the `usecase` for each `repository` method
 
 1. First write the test for it
    > The first and only test will ensure that the Repository is
@@ -112,7 +114,7 @@ outside world of APIs and 3rd party libraries. It consists of low-level Data
 Sources, Repositories which are the single source of truth for the data, and
 finally Models.
 
-### - Implement `model`
+### - Add `model`
 
 - Create a _fixture_ to test the `model`'s `fromJson` and `toJson` methods
   > Let's first conversion logic we'll implement will be the fromJson method
@@ -124,7 +126,7 @@ finally Models.
   > API is under maintenance? We don't want any outside forces to mess with
   > the results of our tests.
 
-### - Implement `repository` concrete implementation
+### - Add `repository` concrete implementation
 
 1.  Implement the `repository`'s dependency contracts
     Are Data Sources enough though? After all, we will cache the latest Posts
@@ -144,3 +146,16 @@ finally Models.
     > - When getting data from the repository: `get<use_case>`
 
 3.  Implement `Exceptions` and `Failures`
+
+## Implement the `presentation` layer
+
+### - Add `bloc` classes
+
+1. Implement bloc `event` classes
+2. Implement bloc `state` classes
+3. Implement bloc `bloc` classes
+   - Add `usecases` to the bloc
+     > The `usecases` will be injected into the bloc's constructor, it's the
+     > connection between the `presentation` and `domain` layers. This is
+     > possible because we're using the `get_it` package to manage our
+     > dependencies.

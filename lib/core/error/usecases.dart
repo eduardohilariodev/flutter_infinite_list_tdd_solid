@@ -1,6 +1,6 @@
-import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/failures.dart';
+import 'package:fpdart/fpdart.dart';
 
 /// Parameters have to be put into a container object so that they can be
 /// included in this abstract base class method definition.

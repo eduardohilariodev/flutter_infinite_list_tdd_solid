@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/models/post_model.dart';
-import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post.dart';
+import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 
 void main() {
-  const tPost = Post(id: 1, userId: 1, title: 'title', body: 'body');
+  const tPost = PostEntity(id: 1, userId: 1, title: 'title', body: 'body');
   const tPostModel = PostModel(id: 1, userId: 1, title: 'title', body: 'body');
 
   /// Since the relation between the Model and the Entity is very important, we
@@ -16,7 +16,7 @@ void main() {
     'SHOULD be a subclass of the [Post] entity',
     () async {
       // Assert
-      expect(tPostModel, isA<Post>());
+      expect(tPostModel, isA<PostEntity>());
     },
   );
   test(

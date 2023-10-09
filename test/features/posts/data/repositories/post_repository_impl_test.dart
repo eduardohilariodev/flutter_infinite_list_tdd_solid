@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/exceptions.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/failures.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/network_info.dart';
@@ -9,8 +8,9 @@ import 'package:flutter_infinite_list_tdd_solid/features/posts/data/datasources/
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/datasources/post_remote_data_source.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/models/post_model.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/data/repositories/post_repository_impl.dart';
-import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post.dart';
+import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
@@ -42,19 +42,6 @@ void main() {
       networkInfo: mockNetworkInfo,
     );
   });
-  void expectPostListEquality(
-    Either<Failure, List<Post>> result,
-    List<Post> expected,
-  ) {
-    const listEquality = ListEquality<Post>();
-    expect(
-      listEquality.equals(
-        result.getOrElse(() => []),
-        expected,
-      ),
-      isTrue,
-    );
-  }
 
   void runTestsOnline(void Function() body) {
     group('Device is online | ', () {
@@ -102,7 +89,9 @@ void main() {
 
           // Assert
           verify(() => mockRemoteDataSource.fetchPosts(tStartIndex));
-          expectPostListEquality(result, [tPost]);
+          final deepCollectionEquality = const DeepCollectionEquality()
+              .equals(result.getOrElse((failure) => []), [tPost]);
+          expect(deepCollectionEquality, isTrue);
         },
       );
 
@@ -121,8 +110,6 @@ void main() {
         'SHOULD return [ServerFailure] WHEN the call to remote source IS unsuccesful',
         () async {
           // Arrange
-          when(() => mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-
           when(() => mockRemoteDataSource.fetchPosts(any()))
               .thenThrow(ServerException());
           // Act
@@ -132,7 +119,7 @@ void main() {
           verifyZeroInteractions(mockLocalDataSource);
           expect(
             result,
-            equals(Left<Failure, List<Post>>(ServerFailure())),
+            equals(Left<Failure, List<PostEntity>>(ServerFailure())),
           );
         },
       );
@@ -150,7 +137,9 @@ void main() {
           // Assert
           verifyZeroInteractions(mockRemoteDataSource);
           verify(() => mockLocalDataSource.getLastPosts());
-          expectPostListEquality(result, [tPost]);
+          final deepCollectionEquality = const DeepCollectionEquality()
+              .equals(result.getOrElse((failure) => []), [tPost]);
+          expect(deepCollectionEquality, isTrue);
         },
       );
 
@@ -167,7 +156,7 @@ void main() {
           verify(() => mockLocalDataSource.getLastPosts());
           expect(
             result,
-            equals(Left<Failure, List<Post>>(CacheFailure())),
+            equals(Left<Failure, List<PostEntity>>(CacheFailure())),
           );
         },
       );

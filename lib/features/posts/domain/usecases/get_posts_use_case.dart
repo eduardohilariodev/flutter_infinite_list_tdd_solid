@@ -1,12 +1,12 @@
-import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/failures.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/usecases.dart';
-import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post.dart';
+import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post_entity.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/repositories/post_repository.dart';
+import 'package:fpdart/fpdart.dart';
 
-final class GetPosts extends UseCase<List<Post>, Params> {
-  GetPosts(this.repository);
+interface class GetPostsUseCase extends UseCase<List<PostEntity>, Params> {
+  GetPostsUseCase(this.repository);
 
   final PostRepository repository;
 
@@ -20,7 +20,7 @@ final class GetPosts extends UseCase<List<Post>, Params> {
   /// us a [List<Post>] or sends a space shuttle to the Moon, the interface
   /// should be the same to prevent any confusion.
   @override
-  Future<Either<Failure, List<Post>>> call(Params params) async {
+  Future<Either<Failure, List<PostEntity>>> call(Params params) async {
     return repository.getPosts(params.startIndex);
   }
 }

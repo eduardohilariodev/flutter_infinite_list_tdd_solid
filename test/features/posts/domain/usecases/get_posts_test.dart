@@ -1,20 +1,20 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/error/failures.dart';
-import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post.dart';
+import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post_entity.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/repositories/post_repository.dart';
-import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/usecases/get_posts.dart';
+import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/usecases/get_posts_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockPostRepository extends Mock implements PostRepository {}
 
 void main() {
-  late GetPosts getPosts;
+  late GetPostsUseCase getPosts;
   late MockPostRepository mockPostRepository;
 
   setUp(() {
     mockPostRepository = MockPostRepository();
-    getPosts = GetPosts(mockPostRepository);
+    getPosts = GetPostsUseCase(mockPostRepository);
   });
 
   const tStartIndex = 1;
@@ -22,7 +22,8 @@ void main() {
   const tUserId = 1;
   const tTitle = 'title';
   const tBody = 'body';
-  const tPost = Post(id: tId, userId: tUserId, title: tTitle, body: tBody);
+  const tPost =
+      PostEntity(id: tId, userId: tUserId, title: tTitle, body: tBody);
 
   test(
     'SHOULD get a [List<Post>] WHEN the repository IS called',
@@ -42,7 +43,7 @@ void main() {
 
       /// Assert
       // UseCase should simply return whatever was returned from the Repository
-      expect(result, const Right<Failure, List<Post>>([tPost]));
+      expect(result, const Right<Failure, List<PostEntity>>([tPost]));
 
       // Verify that the method has been called on the Repository
       verify(() => mockPostRepository.getPosts(tStartIndex)).called(1);
