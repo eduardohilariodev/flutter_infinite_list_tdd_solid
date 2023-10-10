@@ -24,7 +24,6 @@ void main() {
   const path = 'https://jsonplaceholder.typicode.com/posts/1';
 
   setUp(() async {
-    //test
     mockDioAdapter = MockDioAdapter();
     mockDio = MockDio()..httpClientAdapter = mockDioAdapter;
     httpServiceDioImpl = HttpServiceDioImpl(mockDio);
