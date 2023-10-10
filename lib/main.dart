@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_infinite_list_tdd_solid/features/posts/presentation/pages/post_page.dart';
 import 'package:flutter_infinite_list_tdd_solid/injection_container.dart' as di;
 
 void main() async {
@@ -12,6 +13,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'Flutter Demo', home: Scaffold());
+    return const MaterialApp(title: 'Flutter Demo', home: PostPage());
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_infinite_list_tdd_solid/core/bloc/event_transformers.dar
 import 'package:flutter_infinite_list_tdd_solid/core/error/failures.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/entities/post_entity.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/usecases/get_posts_use_case.dart';
+import 'package:flutter_infinite_list_tdd_solid/features/posts/presentation/pages/post_page.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'post_event.dart';

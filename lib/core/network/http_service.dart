@@ -13,3 +13,4 @@ final class HttpResponse<T> extends Equatable {
   @override
   List<Object?> get props => [data, statusCode];
 }
+  

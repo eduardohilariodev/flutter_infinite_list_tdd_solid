@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/http_service.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/http_service_dio_impl.dart';
 import 'package:flutter_infinite_list_tdd_solid/core/network/network_info.dart';
@@ -11,6 +12,8 @@ import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/repositori
 import 'package:flutter_infinite_list_tdd_solid/features/posts/domain/usecases/get_posts_use_case.dart';
 import 'package:flutter_infinite_list_tdd_solid/features/posts/presentation/bloc/post_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const bool isTesting = false;
 
@@ -18,11 +21,30 @@ const bool isTesting = false;
 final GetIt sl = GetIt.instance;
 
 Future<void> init() async {
-  await core();
-  await posts();
+  await external();
+
+  core();
+  posts();
 }
 
-Future<void> core() async {
+Future<void> external() async {
+  sl
+    ..registerLazySingletonAsync<SharedPreferences>(
+      () async {
+        final sh = await SharedPreferences.getInstance();
+        return sh;
+      },
+    )
+    ..registerLazySingletonAsync(() async => Dio())
+    ..registerLazySingletonAsync<InternetConnectionChecker>(
+      () async => InternetConnectionChecker(),
+    );
+  await sl.isReady<SharedPreferences>();
+  await sl.isReady<Dio>();
+  await sl.isReady<InternetConnectionChecker>();
+}
+
+void core() {
   sl
     ..registerLazySingleton<HttpService>(() => HttpServiceDioImpl(sl()))
     ..registerLazySingleton<NetworkInfo>(
@@ -33,7 +55,7 @@ Future<void> core() async {
     );
 }
 
-Future<void> posts() async {
+void posts() {
   sl
     // Data
     ..registerLazySingleton<PostLocalDataSource>(
@@ -52,5 +74,5 @@ Future<void> posts() async {
     // Domain
     ..registerLazySingleton(() => GetPostsUseCase(sl()))
     // Presentation
-    ..registerLazySingleton(() => PostBloc(getPostsUseCase: sl()));
+    ..registerFactory(() => PostBloc(getPostsUseCase: sl()));
 }
