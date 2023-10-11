@@ -42,12 +42,6 @@ class _PostsListState extends State<_PostList> {
     return BlocBuilder<PostBloc, PostState>(
       builder: (context, state) {
         switch (state.status) {
-          case PostStatus.initial:
-            return const Center(child: CircularProgressIndicator());
-          case PostStatus.loading:
-            return const Center(child: CircularProgressIndicator());
-          case PostStatus.failure:
-            return Center(child: Text('${state.message}'));
           case PostStatus.success:
             return ListView.builder(
               controller: _scrollController,
@@ -56,10 +50,14 @@ class _PostsListState extends State<_PostList> {
                   : state.posts.length + 1,
               itemBuilder: (context, index) {
                 return index >= state.posts.length
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const _BottomLoader()
                     : _PostListItem(post: state.posts[index]);
               },
             );
+          case PostStatus.loading:
+            return const Center(child: CircularProgressIndicator());
+          case PostStatus.failure:
+            return Center(child: Text('${state.message}'));
         }
       },
     );

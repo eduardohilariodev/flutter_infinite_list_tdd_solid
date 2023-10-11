@@ -49,7 +49,6 @@ void main() {
         bloc.add(PostFetchedEvent());
       },
       expect: () => [
-        const PostState(status: PostStatus.loading),
         PostState(status: PostStatus.success, posts: tPostModelList),
       ],
     );
@@ -62,7 +61,6 @@ void main() {
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
       expect: () => [
-        const PostState(status: PostStatus.loading),
         PostState(status: PostStatus.success, posts: tPostModelList),
       ],
     );
@@ -76,7 +74,6 @@ void main() {
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
       expect: () => [
-        const PostState(status: PostStatus.loading),
         const PostState(status: PostStatus.failure, message: 'Server Failure'),
       ],
     );
@@ -90,7 +87,6 @@ void main() {
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
       expect: () => [
-        const PostState(status: PostStatus.loading),
         const PostState(status: PostStatus.failure, message: 'Cache Failure'),
       ],
     );
@@ -104,7 +100,6 @@ void main() {
       },
       act: (bloc) => bloc.add(PostFetchedEvent()),
       expect: () => [
-        const PostState(status: PostStatus.loading),
         const PostState(status: PostStatus.success, hasReachedMax: true),
       ],
     );
@@ -128,7 +123,6 @@ void main() {
       },
       act: (bloc) async => addFiveEvents(),
       expect: () => [
-        const PostState(status: PostStatus.loading),
         PostState(status: PostStatus.success, posts: tPostModelList),
       ],
     );

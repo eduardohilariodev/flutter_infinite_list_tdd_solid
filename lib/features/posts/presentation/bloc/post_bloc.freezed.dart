@@ -132,7 +132,7 @@ class __$$_PostStateCopyWithImpl<$Res>
 
 class _$_PostState implements _PostState {
   const _$_PostState(
-      {this.status = PostStatus.initial,
+      {this.status = PostStatus.loading,
       final List<PostEntity> posts = const [],
       this.hasReachedMax = false,
       this.message})
