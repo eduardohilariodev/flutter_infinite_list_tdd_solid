@@ -17,13 +17,17 @@ final class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
   @override
   Future<List<PostModel>> fetchPosts(int startIndex, int limitIndex) async {
-    final response = await httpService.get<List<Map<String, dynamic>>>(
+    final response = await httpService.get<List<dynamic>>(
       'https://jsonplaceholder.typicode.com/posts?_start=$startIndex&_limit=$limitIndex',
       headers: {'Content-Type': 'application/json'},
     );
+
     if (response.statusCode == 200) {
       final jsonList = response.data;
-      final postModelList = jsonList.map(PostModel.fromJson).toList();
+      final postModelList = jsonList
+          .whereType<Map<String, dynamic>>()
+          .map(PostModel.fromJson)
+          .toList();
       return postModelList;
     } else {
       throw ServerException();

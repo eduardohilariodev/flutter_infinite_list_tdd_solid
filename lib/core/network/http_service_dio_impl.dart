@@ -12,15 +12,16 @@ final class HttpServiceDioImpl implements HttpService {
     String url, {
     Map<String, dynamic>? headers,
   }) async {
-    final response = await dio.get<T>(
-      url,
-      options: Options(
-        headers: headers,
-      ),
-    );
-    if (response.statusCode != 200) {
+    try {
+      final response = await dio.get<T>(
+        url,
+        options: Options(
+          headers: headers,
+        ),
+      );
+      return HttpResponse(response.data as T, response.statusCode!);
+    } on Exception {
       throw ServerException();
     }
-    return HttpResponse(response.data as T, response.statusCode!);
   }
 }
